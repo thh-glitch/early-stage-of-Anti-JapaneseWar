@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>抗戰初期失利原因探討</title>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mobile-drag-drop@2.3.0-rc.2/default.css">
+    <script src="https://cdn.jsdelivr.net/npm/mobile-drag-drop@2.3.0-rc.2/index.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mobile-drag-drop@2.3.0-rc.2/scroll-behaviour.min.js"></script>
+
     <style>
         :root {
             --bg-color: #F7F5F0; 
@@ -62,8 +67,7 @@
         .source-green { border-left-color: var(--green-main) !important; }
         .source-green h3 { color: var(--green-main); margin-top: 0; border-bottom: 1px solid #EEE; padding-bottom: 12px; font-size: 1.15rem;}
         
-        /* 確保 iPad 可以選取文字 */
-        .source-text { font-size: 1.05rem; cursor: text; line-height: 1.8; -webkit-user-select: text; user-select: text; -webkit-touch-callout: default; }
+        .source-text { font-size: 1.05rem; cursor: text; line-height: 1.8; }
 
         /* 原文反白樣式 */
         .highlight-blue { background-color: var(--blue-highlight); color: #000; border-radius: 4px; padding: 2px 4px; }
@@ -149,13 +153,20 @@
         .step-error-msg { color: #EF4444; font-size: 0.9rem; margin-top: 8px; display: none; font-weight: 500; }
         .chain-success { color: #15803D; font-weight: bold; font-size: 1.05rem; padding: 15px; background: #F0FDF4; border-radius: 8px; margin-top: 15px; border: 1px solid #BBF7D0;}
 
-        /* 分欄佈局 */
-        .split-chains-container { display: none; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
-        @media (max-width: 768px) { .split-chains-container { grid-template-columns: 1fr; } }
+        /* 分欄佈局：同時支援第一部分與第二部分 */
+        .split-chains-container, .part1-chains-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
+        .split-chains-container { display: none; }
+        @media (max-width: 768px) { 
+            .split-chains-container, .part1-chains-container { grid-template-columns: 1fr; } 
+            .drop-zones { grid-template-columns: 1fr; } 
+        }
 
         /* --- 各組專屬筆記本區 --- */
         .notebook-section { background-color: #FFFDE7; border: 2px dashed #FBC02D; border-radius: 12px; padding: 24px; margin-top: 20px; width: 100%; box-sizing: border-box; }
-        .notebook-section h3 { margin-top: 0; color: #D84315; font-size: 1.2rem; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #FFF59D; padding-bottom: 12px; }
+        .notebook-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #FFF59D; padding-bottom: 12px; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
+        .notebook-header h3 { margin: 0; color: #D84315; font-size: 1.2rem; display: flex; align-items: center; gap: 8px; border: none; padding-bottom: 0; }
+        .copy-btn { background: #1E293B; color: #FFF; border: none; padding: 8px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 0.9rem; }
+        .copy-btn:hover { background: #0F172A; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
         .notes-container { display: flex; flex-direction: column; gap: 16px; }
         .empty-note { color: #8D6E63; font-style: italic; text-align: center; padding: 20px; }
         .final-note-card { background: white; padding: 16px 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border-left: 4px solid #D84315; font-size: 0.95rem; line-height: 1.6; color: #3E2723; animation: fadeIn 0.5s ease; }
@@ -166,27 +177,6 @@
         .shake { animation: shake 0.3s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- 針對 iPad 與手機的觸控優化：將擷取按鈕固定於畫面底部 --- */
-        @media (max-width: 1024px) {
-            .extract-btn {
-                position: fixed !important;
-                bottom: 40px !important;
-                top: auto !important;
-                left: 50% !important;
-                transform: translateX(-50%) !important;
-                padding: 14px 32px !important;
-                font-size: 1.15rem !important;
-                width: auto !important;
-                min-width: 200px;
-                text-align: center;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.3) !important;
-                border-radius: 50px !important; 
-                z-index: 99999 !important;
-            }
-            .extract-btn:hover, .extract-btn:active {
-                transform: translateX(-50%) scale(1.05) !important;
-            }
-        }
     </style>
 </head>
 <body>
@@ -228,7 +218,11 @@
                     <button class="start-chain-btn" id="btn-g1-terrain">🔗 進行邏輯推導</button>
                 </div>
             </div>
-            <div id="g1-part1-chains" style="display: flex; flex-direction: column; gap: 20px; margin-top: 20px;"></div>
+            
+            <div class="part1-chains-container">
+                <div id="g1-part1-left-chain"></div>
+                <div id="g1-part1-right-chain"></div>
+            </div>
         </div>
 
         <div class="mcq-section" id="g1-mcq-container" style="display: none;">
@@ -253,7 +247,10 @@
         </div>
 
         <div class="notebook-section">
-            <h3>📜 第一組：軍備及地理因素 專屬筆記</h3>
+            <div class="notebook-header">
+                <h3>📜 第一組：軍備及地理因素 專屬筆記</h3>
+                <button class="copy-btn" onclick="copyNotes('g1')">📋 複製本組筆記</button>
+            </div>
             <div id="notes-container-g1" class="notes-container">
                 <div class="empty-note">尚無筆記。請完成上方的「邏輯推導」或「補充背景」，筆記將自動條列於此。</div>
             </div>
@@ -290,7 +287,11 @@
                     <button class="start-chain-btn" id="btn-g2-morale">🔗 進行邏輯推導</button>
                 </div>
             </div>
-            <div id="g2-part1-chains" style="display: flex; flex-direction: column; gap: 20px; margin-top: 20px;"></div>
+            
+            <div class="part1-chains-container">
+                <div id="g2-part1-left-chain"></div>
+                <div id="g2-part1-right-chain"></div>
+            </div>
         </div>
 
         <div class="mcq-section" id="g2-mcq-container" style="display: none;">
@@ -315,7 +316,10 @@
         </div>
 
         <div class="notebook-section">
-            <h3>📜 第二組：民心及士氣因素 專屬筆記</h3>
+            <div class="notebook-header">
+                <h3>📜 第二組：民心及士氣因素 專屬筆記</h3>
+                <button class="copy-btn" onclick="copyNotes('g2')">📋 複製本組筆記</button>
+            </div>
             <div id="notes-container-g2" class="notes-container">
                 <div class="empty-note">尚無筆記。請完成上方的「邏輯推導」或「補充背景」，筆記將自動條列於此。</div>
             </div>
@@ -348,7 +352,11 @@
                     <button class="start-chain-btn" id="btn-g3-league">🔗 進行邏輯推導</button>
                 </div>
             </div>
-            <div id="g3-part1-chains" style="display: flex; flex-direction: column; gap: 20px; margin-top: 20px;"></div>
+            
+            <div class="part1-chains-container">
+                <div id="g3-part1-left-chain"></div>
+                <div id="g3-part1-right-chain"></div>
+            </div>
         </div>
 
         <div class="mcq-section" id="g3-mcq-container" style="display: none;">
@@ -373,7 +381,10 @@
         </div>
 
         <div class="notebook-section">
-            <h3>📜 第三組：國際形勢因素 專屬筆記</h3>
+            <div class="notebook-header">
+                <h3>📜 第三組：國際形勢因素 專屬筆記</h3>
+                <button class="copy-btn" onclick="copyNotes('g3')">📋 複製本組筆記</button>
+            </div>
             <div id="notes-container-g3" class="notes-container">
                 <div class="empty-note">尚無筆記。請完成上方的「邏輯推導」或「補充背景」，筆記將自動條列於此。</div>
             </div>
@@ -382,6 +393,12 @@
 </div>
 
 <script>
+    // --- iPad 拖曳 Polyfill 初始化 ---
+    MobileDragDrop.polyfill({
+        dragImageTranslateOverride: MobileDragDrop.scrollBehaviourDragImageTranslateOverride
+    });
+    window.addEventListener('touchmove', function() {}, {passive: false});
+
     // --- 介面切換邏輯 ---
     let currentTab = 'tab1';
     function switchTab(tabId) {
@@ -394,6 +411,66 @@
         // 切換分頁時隱藏反白按鈕
         document.getElementById('global-extract-btn').style.display = 'none';
         window.getSelection().removeAllRanges();
+    }
+
+    // --- 筆記複製功能 ---
+    function copyNotes(prefix) {
+        const container = document.getElementById(`notes-container-${prefix}`);
+        const noteCards = container.querySelectorAll('.final-note-card');
+        
+        if (noteCards.length === 0) {
+            alert("尚無筆記可複製！請先完成推導任務。");
+            return;
+        }
+
+        let textToCopy = "";
+        noteCards.forEach(card => {
+            let titleElement = card.querySelector('strong');
+            let title = titleElement ? titleElement.innerText : "";
+            let listItems = card.querySelectorAll('li');
+            
+            textToCopy += title + "\n";
+            listItems.forEach(li => {
+                textToCopy += "- " + li.innerText + "\n";
+            });
+            textToCopy += "\n";
+        });
+        
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                alert("✅ 筆記已成功複製到剪貼簿！");
+            }).catch(err => {
+                console.error('複製失敗:', err);
+                fallbackCopyTextToClipboard(textToCopy);
+            });
+        } else {
+            fallbackCopyTextToClipboard(textToCopy);
+        }
+    }
+
+    function fallbackCopyTextToClipboard(text) {
+        let textArea = document.createElement("textarea");
+        textArea.value = text;
+        textArea.style.top = "0";
+        textArea.style.left = "0";
+        textArea.style.position = "fixed";
+
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+
+        try {
+            let successful = document.execCommand('copy');
+            if (successful) {
+                alert("✅ 筆記已成功複製到剪貼簿！");
+            } else {
+                alert("❌ 複製失敗，請手動選取複製。");
+            }
+        } catch (err) {
+            console.error('Fallback: Oops, unable to copy', err);
+            alert("❌ 複製失敗，請手動選取複製。");
+        }
+        document.body.removeChild(textArea);
     }
 
     // ==================== 資料庫定義 ====================
@@ -855,7 +932,7 @@
         });
     }
 
-    function initKeywords(prefix, keysData, chainDb, badgeTitle) {
+    function initKeywords(prefix, keysData, chainDb) {
         const wrongs = keysData.filter(k => k.type === 'wrong').sort(() => Math.random() - 0.5);
         const corrects = keysData.filter(k => k.type === 'chain');
         const firstTwo = [wrongs[0], wrongs[1]];
@@ -908,9 +985,6 @@
                     chainsContainer.appendChild(chainBox);
                 });
                 
-                // 觸發全局進度與徽章更新
-                updateGlobalProgress(prefix, badgeTitle);
-                
             } else {
                 testMsg.style.display = 'block'; testMsg.className = 'step-error-msg';
                 let errorFeedback = '⚠️ 選擇錯誤。<br>';
@@ -926,35 +1000,35 @@
         });
     }
 
-    // --- 綁定第一部分的推導按鈕 ---
-    function bindPart1Button(btnId, chainKey, db, prefix) {
+    // --- 綁定第一部分的推導按鈕 (指定展開欄位) ---
+    function bindPart1Button(btnId, chainKey, db, prefix, position) {
         const btn = document.getElementById(btnId);
         btn.addEventListener('click', function() {
             if (this.classList.contains('active-chain') || this.classList.contains('completed')) return;
             this.classList.add('active-chain');
             
-            const container = document.getElementById(`${prefix}-part1-chains`);
+            const container = document.getElementById(`${prefix}-part1-${position}-chain`);
             const chainBox = buildChainComponent(chainKey, db, prefix, this);
             container.appendChild(chainBox);
             chainBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
         });
     }
 
-    bindPart1Button('btn-g1-enemy', 'source-enemy', g1Chains, 'g1');
-    bindPart1Button('btn-g1-terrain', 'source-terrain', g1Chains, 'g1');
+    bindPart1Button('btn-g1-enemy', 'source-enemy', g1Chains, 'g1', 'left');
+    bindPart1Button('btn-g1-terrain', 'source-terrain', g1Chains, 'g1', 'right');
     
-    bindPart1Button('btn-g2-internal', 'source-internal', g2Chains, 'g2');
-    bindPart1Button('btn-g2-morale', 'source-morale', g2Chains, 'g2');
+    bindPart1Button('btn-g2-internal', 'source-internal', g2Chains, 'g2', 'left');
+    bindPart1Button('btn-g2-morale', 'source-morale', g2Chains, 'g2', 'right');
 
-    bindPart1Button('btn-g3-depression', 'source-depression', g3Chains, 'g3');
-    bindPart1Button('btn-g3-league', 'source-league', g3Chains, 'g3');
+    bindPart1Button('btn-g3-depression', 'source-depression', g3Chains, 'g3', 'left');
+    bindPart1Button('btn-g3-league', 'source-league', g3Chains, 'g3', 'right');
 
     // --- 初始化執行 ---
     initDragAndDrop('g1'); initDragAndDrop('g2'); initDragAndDrop('g3'); 
     initMCQ('g1', g1MCQ); initMCQ('g2', g2MCQ); initMCQ('g3', g3MCQ); 
-    initKeywords('g1', g1Keys, g1Chains, '軍備與地理'); 
-    initKeywords('g2', g2Keys, g2Chains, '民心與政治'); 
-    initKeywords('g3', g3Keys, g3Chains, '國際形勢'); 
+    initKeywords('g1', g1Keys, g1Chains); 
+    initKeywords('g2', g2Keys, g2Chains); 
+    initKeywords('g3', g3Keys, g3Chains); 
 
 </script>
 
