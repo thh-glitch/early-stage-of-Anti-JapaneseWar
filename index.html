@@ -205,6 +205,27 @@
             .final-note-card { box-shadow: none; border: 1px solid #CCC; border-left: 6px solid #666; page-break-inside: avoid; margin-bottom: 10px; }
         }
 
+        /* --- 針對 iPad 與手機的觸控優化：將擷取按鈕固定於畫面底部 --- */
+        @media (max-width: 1024px) {
+            .extract-btn {
+                position: fixed !important;
+                bottom: 40px !important;
+                top: auto !important;
+                left: 50% !important;
+                transform: translateX(-50%) !important;
+                padding: 14px 32px !important;
+                font-size: 1.15rem !important;
+                width: auto !important;
+                min-width: 200px;
+                text-align: center;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.3) !important;
+                border-radius: 50px !important; /* 變成更適合觸控的圓角藥丸形狀 */
+                z-index: 99999 !important;
+            }
+            .extract-btn:hover, .extract-btn:active {
+                transform: translateX(-50%) scale(1.05) !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -894,11 +915,10 @@
     function initMCQ(prefix, mcqData) {
         const optionsContainer = document.getElementById(`${prefix}-mcq-options`);
         const errorMsg = document.getElementById(`${prefix}-mcq-error`);
-        const labels = ['i)', 'ii)', 'iii)']; // 前綴標籤
+        const labels = ['i)', 'ii)', 'iii)'];
 
         mcqData.sort(() => Math.random() - 0.5).forEach((opt, index) => {
             const btn = document.createElement('button'); btn.className = 'step-opt-btn'; 
-            // 動態加入前綴
             btn.textContent = `${labels[index]} ${opt.text}`;
             btn.addEventListener('click', () => {
                 if(state[prefix].mcqDone) return;
