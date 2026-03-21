@@ -84,32 +84,33 @@
         .highlight-orange { background-color: var(--orange-highlight); color: #000; border-radius: 4px; padding: 2px 4px; }
         .highlight-green { background-color: var(--green-highlight); color: #000; border-radius: 4px; padding: 2px 4px; }
 
-        /* --- ✨ 擷取重點按鈕 (全局固定於畫面正下方，避開 iPad 工具列) --- */
+        /* --- ✨ 擷取重點按鈕 --- */
         .extract-btn {
-            position: fixed !important;
-            bottom: 40px !important;
-            top: auto !important;
-            left: 50% !important;
-            transform: translateX(-50%) !important;
-            padding: 14px 32px !important;
-            font-size: 1.15rem !important;
-            font-weight: bold !important;
-            width: auto !important;
-            min-width: 200px;
-            text-align: center;
-            background-color: #1E293B !important;
-            color: white !important;
-            border: 2px solid #FFF !important;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3) !important;
-            border-radius: 50px !important;
-            z-index: 99999 !important;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: none;
+            position: absolute; display: none; background-color: #1E293B; color: white;
+            border: 2px solid #FFF; padding: 8px 16px; border-radius: 8px; font-size: 0.95rem; font-weight: bold;
+            cursor: pointer; box-shadow: 0 6px 16px rgba(0,0,0,0.25); z-index: 99999; transition: transform 0.1s;
         }
-        .extract-btn:hover, .extract-btn:active {
-            transform: translateX(-50%) scale(1.05) !important;
-            background-color: #0F172A !important;
+        .extract-btn:hover { transform: scale(1.05); background-color: #0F172A; }
+
+        /* 針對 所有觸控裝置 (含橫向iPad與iPad Pro) 強制按鈕置底，避開原生工具列 */
+        @media (pointer: coarse), (max-width: 1366px) {
+            .extract-btn {
+                position: fixed !important;
+                bottom: 40px !important;
+                top: auto !important;
+                left: 50% !important;
+                transform: translateX(-50%) !important;
+                padding: 14px 32px !important;
+                font-size: 1.15rem !important;
+                width: auto !important;
+                min-width: 200px;
+                text-align: center;
+                border-radius: 50px !important; 
+                box-shadow: 0 10px 30px rgba(0,0,0,0.3) !important;
+            }
+            .extract-btn:hover, .extract-btn:active {
+                transform: translateX(-50%) scale(1.05) !important;
+            }
         }
 
         /* --- 標籤 (Chips) --- */
@@ -199,7 +200,7 @@
         }
         .split-chains-container { display: none; }
         
-        /* 確保 iPad(768px) 維持左右排！只有在極窄手機(600px以下) 才變上下排 */
+        /* 確保 iPad(768px以上) 維持左右排！只有在極窄手機(600px以下) 才變上下排 */
         @media (max-width: 600px) { 
             .split-chains-container, .part1-chains-container { grid-template-columns: 1fr; } 
             .drop-zones { grid-template-columns: 1fr; } 
@@ -220,7 +221,6 @@
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
         .shake { animation: shake 0.3s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
-
     </style>
 </head>
 <body>
@@ -424,7 +424,7 @@
             <div id="g3-part2-lock" class="lock-msg">🔒 請先完成「第一部分」的推導與小測驗，才能解鎖此區！</div>
             <div id="g3-part2-content" class="locked-area">
                 <div class="section-title" style="border-left-color: #F59E0B;">第二部分：補充隱藏背景 (孤立無援的苦戰)</div>
-                <p style="font-size: 0.95rem; margin-top:0; color: #B45309; background: #FEF3C7; padding: 8px 12px; border-radius: 6px; display: inline-block;">⚠️ <strong>挑戰：</strong>以下六個選項中，<strong>只有兩項</strong>是中國面對國際孤立時的關鍵外部處境與應對策略。選出兩項後點擊「測試」。</p>
+                <p style="font-size: 0.95rem; margin-top:0; color: #B45309; background: #FEF3C7; padding: 8px 12px; border-radius: 6px; display: inline-block;">⚠️ <strong>挑戰：</strong>以下六個選項中，<strong>只有兩項</strong>是中國面對國際孤立時的關鍵外部處境與應策略。選出兩項後點擊「測試」。</p>
                 <div class="supp-keywords" id="g3-keywords-container"></div>
                 <button id="g3-test-btn" class="test-btn" disabled>進行測試 (已選 0 / 2)</button>
                 <div id="g3-test-msg" class="step-error-msg" style="margin-top: 15px; font-size: 1rem; text-align: center;"></div>
@@ -612,7 +612,7 @@
                 { question: "Q3. 國防建設的停滯與資源內耗，最終如何反映在抗戰初期的戰場上？", options: [{ text: "國軍整體戰力羸弱，裝備與訓練遠落後於日軍，開戰即陷劣勢", isCorrect: true }, { text: "使得國防預算充裕，足以應付長期消耗", isCorrect: false, error: "⚠️ 資源耗盡導致開戰即陷入全面劣勢。" }] }
             ],
             conclusion: "🎉 推理完成！重點筆記已加入專屬筆記本。", noteId: "note-g2-10years",
-            summaryNote: "<strong>【補充重點：國共十年對立】</strong><ul><li>十年內戰严重消耗國防資源，力量無法集中。</li><li>阻礙了全國國防體系與現代化軍工業的建立。</li><li>導致國軍戰力羸弱，抗戰一爆發即陷入全面劣勢。</li></ul>"
+            summaryNote: "<strong>【補充重點：國共十年對立】</strong><ul><li>十年內戰嚴重消耗國防資源，力量無法集中。</li><li>阻礙了全國國防體系與現代化軍工業的建立。</li><li>導致國軍戰力羸弱，抗戰一爆發即陷入全面劣勢。</li></ul>"
         }
     };
 
@@ -703,17 +703,20 @@
         { text: "苦撐待變與孤軍奮戰", chainKey: "g3-holdout", type: "chain" }
     ];
 
-    // 全局提取按鈕與反白邏輯 (兼容 iPad 手勢)
+    // 全局提取按鈕與反白邏輯 (兼容 iPad 手勢，加入防止被原生工具列覆蓋的安全機制)
     let globalExtractBtn = document.getElementById('global-extract-btn');
     let currentSelectionRange = null;
     let currentSourceTheme = '';
     let currentPrefix = 'g1';
 
-    // 防止 iPad 點擊按鈕時失去選取範圍
+    // 防止 iPad 點擊按鈕時失去選取範圍，確保 passive: false 讓 preventDefault 生效
     globalExtractBtn.addEventListener('mousedown', (e) => e.preventDefault());
-    globalExtractBtn.addEventListener('touchstart', (e) => e.preventDefault());
+    globalExtractBtn.addEventListener('touchstart', (e) => e.preventDefault(), {passive: false});
 
-    function checkSelection() {
+    function checkSelection(e) {
+        // 如果點擊的是按鈕本身，不要執行檢查，交給按鈕的事件處理
+        if (e && e.target && (e.target.classList.contains('extract-btn') || e.target.closest('.extract-btn'))) return;
+
         setTimeout(() => {
             const selection = window.getSelection();
             const selectedText = selection.toString().trim();
@@ -738,14 +741,16 @@
             } else {
                 globalExtractBtn.style.display = 'none';
             }
-        }, 150); // 給予一點延遲等待選取完成
+        }, 150);
     }
 
     document.addEventListener('mouseup', checkSelection);
     document.addEventListener('touchend', checkSelection);
     document.addEventListener('selectionchange', checkSelection);
 
-    globalExtractBtn.addEventListener('click', (e) => {
+    // 按鈕點擊與觸控處理
+    function handleExtract(e) {
+        e.preventDefault(); 
         e.stopPropagation();
         if (currentSelectionRange && currentSourceTheme) {
             const text = currentSelectionRange.toString();
@@ -773,7 +778,10 @@
                 currentSelectionRange = null;
             }, 50);
         }
-    });
+    }
+
+    globalExtractBtn.addEventListener('click', handleExtract);
+    globalExtractBtn.addEventListener('touchend', handleExtract);
 
     // ==================== 獨立推導元件產生器 ====================
     function buildChainComponent(chainKey, sourceDb, prefix, triggerBtn = null) {
