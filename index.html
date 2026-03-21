@@ -315,11 +315,11 @@
 
             <div class="drop-zones">
                 <div class="drop-zone zone-left" id="g2-zone-left">
-                    <h4>⚔️ 國共對立 (含軍閥派系)</h4>
+                    <h4>⚔️ 國共對立及軍閥林立 </h4>
                     <button class="start-chain-btn" id="btn-g2-internal">🔗 進行邏輯推導</button>
                 </div>
                 <div class="drop-zone zone-right" id="g2-zone-right">
-                    <h4>😞 士氣低落 (民心脫節)</h4>
+                    <h4>😞 士氣低落及民心脫節 </h4>
                     <button class="start-chain-btn" id="btn-g2-morale">🔗 進行邏輯推導</button>
                 </div>
             </div>
@@ -514,24 +514,24 @@
     // 第一組 (軍備與地理因素)
     const g1Chains = {
         "source-enemy": {
-            title: "史料歸納：軍備因素", initialNode: "史料一：中國軍隊缺乏重武器",
+            title: "史料歸納：軍備因素", initialNode: "史料一：中國軍隊缺乏重型武器",
             steps: [
-                { question: "Q1. 相對地，日軍當時擁有什麼明顯的軍事優勢？", options: [{ text: "擁有絕對的裝備與工業製造優勢", isCorrect: true }, { text: "擁有豐富的游擊戰經驗", isCorrect: false, error: "⚠️ 史料提到的是絕對裝備優勢。" }] },
-                { question: "Q2. 這種懸殊的軍力對比，導致日軍高層產生什麼戰略企圖？", options: [{ text: "認為中國不堪一擊，企圖在三個月內速戰速決", isCorrect: true }, { text: "準備與中國進行長期消耗戰", isCorrect: false, error: "⚠️ 日軍企圖速決。" }] },
-                { question: "Q3. 這種裝備與戰術的落差，導致國軍在抗戰初期面臨什麼慘痛局面？", options: [{ text: "正面戰場難以抵擋日軍猛烈攻勢，部隊建制屢屢被打殘", isCorrect: true }, { text: "國軍能依靠人數優勢輕易包圍並殲滅日軍", isCorrect: false, error: "⚠️ 裝備落後導致初期完全無法抵擋日軍攻勢。" }] }
+                { question: "Q1. 相對地，日軍當時擁有什麼明顯的軍事優勢？", options: [{ text: "擁有精良的重型武器", isCorrect: true }, { text: "擁有豐富的游擊戰經驗", isCorrect: false, error: "⚠️ 史料提到的是絕對裝備優勢。" }] },
+                { question: "Q2. 這種懸殊的軍力對比下，日軍在作戰上有甚麼戰略企圖？", options: [{ text: "認為中國不堪一擊，行速戰速決政策，企圖「三月亡華」", isCorrect: true }, { text: "準備與中國進行長期消耗戰", isCorrect: false, error: "⚠️ 日軍企圖速決。" }] },
+                { question: "Q3. 因為以上裝備與戰術的落差，導致國軍在抗戰初期面臨什麼慘痛局面？", options: [{ text: "難以抵擋日軍的猛烈攻勢，", isCorrect: true }, { text: "國軍能依靠人數優勢輕易包圍並殲滅日軍", isCorrect: false, error: "⚠️ 裝備落後導致初期完全無法抵擋日軍攻勢。" }] }
             ],
             conclusion: "🎉 推理完成！重點筆記已加入專屬筆記本。", noteId: "note-g1-enemy",
-            summaryNote: "<strong>【軍備因素：敵強我弱】</strong><ul><li>缺乏現代化訓練與重武器，日軍憑藉絕對裝備優勢單方面壓制。</li><li>日軍極度自信，企圖「三個月速戰速決」。</li><li>裝備落差導致初期正面戰場屢屢潰敗，防線難以維持。</li></ul>"
+            summaryNote: "<strong>【軍備因素：敵強我弱】</strong><ul><li>缺乏現代化軍備與重型武器，日軍憑藉絕對裝備優勢單方面壓制中國。</li><li>日軍行速戰速決政策，企圖「三個月滅亡中國」。</li><li>裝備落差導致初期正面戰場屢屢潰敗，防線難以維持。</li></ul>"
         },
         "source-terrain": {
             title: "史料歸納：地理因素", initialNode: "史料二：華北華東盡是平原",
             steps: [
-                { question: "Q1. 平原地形在軍事上最有利於哪種部隊發揮？", options: [{ text: "裝甲機械化部隊（坦克）快速機動", isCorrect: true }, { text: "游擊部隊隱蔽作戰", isCorrect: false, error: "⚠️ 平原極利坦克推進。" }] },
+                { question: "Q1. 平原地形在軍事上最有利於哪種部隊發揮？", options: [{ text: "機械化裝甲部隊，如坦克部隊", isCorrect: true }, { text: "游擊部隊隱蔽作戰", isCorrect: false, error: "⚠️ 平原極利坦克推進。" }] },
                 { question: "Q2. 面對無險可守的平原，中國軍隊初期的防禦代價是什麼？", options: [{ text: "只能用血肉之軀阻擋鋼鐵洪流，死傷慘重", isCorrect: true }, { text: "迅速安全撤退", isCorrect: false, error: "⚠️ 史料指出傷亡慘重。" }] },
                 { question: "Q3. 缺乏天險屏障加上武器劣勢，最終導致抗戰初期華北與華東戰場出現什麼結果？", options: [{ text: "防線迅速崩潰，大片國土在短期內相繼淪陷", isCorrect: true }, { text: "雙方在平原上形成長達數年的拉鋸僵局", isCorrect: false, error: "⚠️ 初期缺乏反坦克武器，防線很快就崩潰淪陷了。" }] }
             ],
             conclusion: "🎉 推理完成！重點筆記已加入專屬筆記本。", noteId: "note-g1-terrain",
-            summaryNote: "<strong>【地理因素：無險可守】</strong><ul><li>主戰場為廣闊平原，無險可守，極利日軍坦克推進。</li><li>國軍缺乏反坦克武器，只能以血肉之軀抵擋，死傷慘重。</li><li>缺乏天險導致華北與華東防線迅速崩潰，大片國土淪陷。</li></ul>"
+            summaryNote: "<strong>【地理因素：無險可守】</strong><ul><li>主戰場為廣闊平原，無險可守，極利日軍坦克部隊推進。</li><li>國軍缺乏反坦克武器，只能以血肉之軀抵擋，死傷慘重。</li><li>缺乏天險導致華北與華東防線迅速崩潰，大片國土淪陷。</li></ul>"
         },
         "g1-coastal": {
             title: "補充背景：政經重心的淪陷", initialNode: "補充重點：東部沿海及華北平原",
@@ -659,7 +659,7 @@
     ];
 
     const g2MCQ = [
-        { text: "「國共對立/派系」導致力量分散，「士氣低落/脫節」導致動員失敗", isCorrect: true },
+        { text: "「國共對立」導致力量分散，「士氣低落」導致動員失敗", isCorrect: true },
         { text: "「國共對立」激發了戰鬥力，「士氣低落」導致士兵投降", isCorrect: false, error: "⚠️ 內部對立並未激發戰鬥力，而是抵消力量。" },
         { text: "國民政府基層組織強大，但高層不願抗戰", isCorrect: false, error: "⚠️ 史料指出是「基層組織極其薄弱」。" }
     ];
