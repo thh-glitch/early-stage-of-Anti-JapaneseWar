@@ -39,14 +39,6 @@
         .container { max-width: 950px; width: 100%; display: flex; flex-direction: column; gap: 24px; }
         h1 { text-align: center; margin-bottom: 5px; color: #1E293B; font-size: 1.8rem; }
         
-        /* --- 全局進度與操作區 --- */
-        .top-dashboard { display: flex; flex-direction: column; align-items: center; gap: 12px; background: #FFF; padding: 16px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.03); margin-bottom: 10px; width: 100%; box-sizing: border-box; }
-        .progress-container { width: 100%; background: #E2E8F0; border-radius: 10px; height: 12px; overflow: hidden; }
-        .progress-bar { height: 100%; background: linear-gradient(90deg, #3B82F6, #10B981); width: 0%; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
-        .badges-container { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
-        .badge { padding: 6px 14px; border-radius: 20px; background: #F1F5F9; color: #94A3B8; font-size: 0.9rem; font-weight: bold; transition: all 0.4s ease; border: 1px solid #E2E8F0; }
-        .badge.unlocked { background: #FEF08A; color: #854D0E; border-color: #FDE047; box-shadow: 0 2px 8px rgba(253,224,71,0.4); transform: scale(1.05); }
-
         .section-title { font-size: 1.3rem; border-left: 5px solid #3B82F6; padding-left: 12px; margin-bottom: 16px; color: #0F172A; font-weight: bold;}
 
         /* --- 分頁導覽列 --- */
@@ -227,15 +219,6 @@
 
 <div class="container">
     <h1>抗戰初期失利原因探討</h1>
-    
-    <div class="top-dashboard">
-        <div class="progress-container"><div class="progress-bar" id="global-progress"></div></div>
-        <div class="badges-container">
-            <span class="badge" id="badge-g1">🔒 未解鎖：軍備與地理</span>
-            <span class="badge" id="badge-g2">🔒 未解鎖：民心與政治</span>
-            <span class="badge" id="badge-g3">🔒 未解鎖：國際形勢</span>
-        </div>
-    </div>
 
     <div class="tabs">
         <button class="tab-btn active" onclick="switchTab('tab1')">第一組：軍備及地理因素</button>
@@ -424,7 +407,7 @@
             <div id="g3-part2-lock" class="lock-msg">🔒 請先完成「第一部分」的推導與小測驗，才能解鎖此區！</div>
             <div id="g3-part2-content" class="locked-area">
                 <div class="section-title" style="border-left-color: #F59E0B;">第二部分：補充隱藏背景 (孤立無援的苦戰)</div>
-                <p style="font-size: 0.95rem; margin-top:0; color: #B45309; background: #FEF3C7; padding: 8px 12px; border-radius: 6px; display: inline-block;">⚠️ <strong>挑戰：</strong>以下六個選項中，<strong>只有兩項</strong>是中國面對國際孤立時的關鍵外部處境與應策略。選出兩項後點擊「測試」。</p>
+                <p style="font-size: 0.95rem; margin-top:0; color: #B45309; background: #FEF3C7; padding: 8px 12px; border-radius: 6px; display: inline-block;">⚠️ <strong>挑戰：</strong>以下六個選項中，<strong>只有兩項</strong>是中國面對國際孤立時的關鍵外部處境與應對策略。選出兩項後點擊「測試」。</p>
                 <div class="supp-keywords" id="g3-keywords-container"></div>
                 <button id="g3-test-btn" class="test-btn" disabled>進行測試 (已選 0 / 2)</button>
                 <div id="g3-test-msg" class="step-error-msg" style="margin-top: 15px; font-size: 1rem; text-align: center;"></div>
@@ -1012,7 +995,7 @@
         });
     }
 
-    function initKeywords(prefix, keysData, chainDb, badgeTitle) {
+    function initKeywords(prefix, keysData, chainDb) {
         const wrongs = keysData.filter(k => k.type === 'wrong').sort(() => Math.random() - 0.5);
         const corrects = keysData.filter(k => k.type === 'chain');
         const firstTwo = [wrongs[0], wrongs[1]];
@@ -1065,9 +1048,6 @@
                     chainsContainer.appendChild(chainBox);
                 });
                 
-                // 觸發全局進度與徽章更新
-                updateGlobalProgress(prefix, badgeTitle);
-                
             } else {
                 testMsg.style.display = 'block'; testMsg.className = 'step-error-msg';
                 let errorFeedback = '⚠️ 選擇錯誤。<br>';
@@ -1109,9 +1089,9 @@
     // --- 初始化執行 ---
     initDragAndDrop('g1'); initDragAndDrop('g2'); initDragAndDrop('g3'); 
     initMCQ('g1', g1MCQ); initMCQ('g2', g2MCQ); initMCQ('g3', g3MCQ); 
-    initKeywords('g1', g1Keys, g1Chains, '軍備與地理'); 
-    initKeywords('g2', g2Keys, g2Chains, '民心與政治'); 
-    initKeywords('g3', g3Keys, g3Chains, '國際形勢'); 
+    initKeywords('g1', g1Keys, g1Chains); 
+    initKeywords('g2', g2Keys, g2Chains); 
+    initKeywords('g3', g3Keys, g3Chains); 
 
 </script>
 
