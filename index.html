@@ -188,10 +188,19 @@
         .step-error-msg { color: #EF4444; font-size: 0.9rem; margin-top: 8px; display: none; font-weight: 500; }
         .chain-success { color: #15803D; font-weight: bold; font-size: 1.05rem; padding: 15px; background: #F0FDF4; border-radius: 8px; margin-top: 15px; border: 1px solid #BBF7D0;}
 
-        /* 雙欄佈局：同時支援第一部分與第二部分 */
-        .split-chains-container, .part1-chains-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
+        /* --- 雙欄佈局：統一支援第一部分與第二部分 --- */
+        .split-chains-container, .part1-chains-container { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 20px; 
+            margin-top: 20px; 
+            width: 100%;
+            box-sizing: border-box;
+        }
         .split-chains-container { display: none; }
-        @media (max-width: 768px) { 
+        
+        /* 確保 iPad(768px) 維持左右排！只有在極窄手機(600px以下) 才變上下排 */
+        @media (max-width: 600px) { 
             .split-chains-container, .part1-chains-container { grid-template-columns: 1fr; } 
             .drop-zones { grid-template-columns: 1fr; } 
         }
@@ -202,7 +211,6 @@
         .notebook-header h3 { margin: 0; color: #D84315; font-size: 1.2rem; display: flex; align-items: center; gap: 8px; border: none; padding-bottom: 0; }
         .copy-btn { background: #1E293B; color: #FFF; border: none; padding: 8px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 0.9rem; }
         .copy-btn:hover { background: #0F172A; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-        
         .notes-container { display: flex; flex-direction: column; gap: 16px; }
         .empty-note { color: #8D6E63; font-style: italic; text-align: center; padding: 20px; }
         .final-note-card { background: white; padding: 16px 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border-left: 4px solid #D84315; font-size: 0.95rem; line-height: 1.6; color: #3E2723; animation: fadeIn 0.5s ease; }
@@ -213,18 +221,6 @@
         .shake { animation: shake 0.3s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- 列印專用樣式 (用於匯出筆記) --- */
-        @media print {
-            body { background: white; padding: 0; }
-            body * { visibility: hidden; }
-            .notebook-section.print-active, .notebook-section.print-active * { visibility: visible; }
-            .notebook-section.print-active { position: absolute; left: 0; top: 0; width: 100%; border: none; background: white; padding: 0; margin: 0; }
-            .notebook-section.print-active .notebook-header { border-bottom: 2px solid #000; }
-            .notebook-section.print-active .notebook-header h3 { color: #000; }
-            .copy-btn { display: none !important; }
-            .empty-note { display: none !important; }
-            .final-note-card { box-shadow: none; border: 1px solid #CCC; border-left: 6px solid #666; page-break-inside: avoid; margin-bottom: 10px; }
-        }
     </style>
 </head>
 <body>
@@ -284,7 +280,7 @@
 
         <div class="mcq-section" id="g1-mcq-container" style="display: none;">
             <div class="section-title" style="border-left-color: #8B5CF6; margin-bottom: 10px;">小測驗：第一部分總結</div>
-            <div class="step-question">綜合上述兩則史料，請選出最準確的配驚結論：</div>
+            <div class="step-question">綜合上述兩則史料，請選出最準確的配對結論：</div>
             <div class="step-options" id="g1-mcq-options"></div>
             <div id="g1-mcq-error" class="step-error-msg"></div>
             <div id="g1-mcq-success" class="chain-success" style="display: none;">🎉 答對了！已為您解鎖第二部分！</div>
@@ -616,7 +612,7 @@
                 { question: "Q3. 國防建設的停滯與資源內耗，最終如何反映在抗戰初期的戰場上？", options: [{ text: "國軍整體戰力羸弱，裝備與訓練遠落後於日軍，開戰即陷劣勢", isCorrect: true }, { text: "使得國防預算充裕，足以應付長期消耗", isCorrect: false, error: "⚠️ 資源耗盡導致開戰即陷入全面劣勢。" }] }
             ],
             conclusion: "🎉 推理完成！重點筆記已加入專屬筆記本。", noteId: "note-g2-10years",
-            summaryNote: "<strong>【補充重點：國共十年對立】</strong><ul><li>十年內戰嚴重消耗國防資源，力量無法集中。</li><li>阻礙了全國國防體系與現代化軍工業的建立。</li><li>導致國軍戰力羸弱，抗戰一爆發即陷入全面劣勢。</li></ul>"
+            summaryNote: "<strong>【補充重點：國共十年對立】</strong><ul><li>十年內戰严重消耗國防資源，力量無法集中。</li><li>阻礙了全國國防體系與現代化軍工業的建立。</li><li>導致國軍戰力羸弱，抗戰一爆發即陷入全面劣勢。</li></ul>"
         }
     };
 
@@ -707,15 +703,17 @@
         { text: "苦撐待變與孤軍奮戰", chainKey: "g3-holdout", type: "chain" }
     ];
 
-    // 全局提取按鈕與反白邏輯
+    // 全局提取按鈕與反白邏輯 (兼容 iPad 手勢)
     let globalExtractBtn = document.getElementById('global-extract-btn');
     let currentSelectionRange = null;
     let currentSourceTheme = '';
     let currentPrefix = 'g1';
 
-    function checkSelection(e) {
-        if (e && e.target && (e.target.classList.contains('extract-btn') || e.target.closest('.extract-btn'))) return;
+    // 防止 iPad 點擊按鈕時失去選取範圍
+    globalExtractBtn.addEventListener('mousedown', (e) => e.preventDefault());
+    globalExtractBtn.addEventListener('touchstart', (e) => e.preventDefault());
 
+    function checkSelection() {
         setTimeout(() => {
             const selection = window.getSelection();
             const selectedText = selection.toString().trim();
@@ -740,15 +738,14 @@
             } else {
                 globalExtractBtn.style.display = 'none';
             }
-        }, 150);
+        }, 150); // 給予一點延遲等待選取完成
     }
 
     document.addEventListener('mouseup', checkSelection);
     document.addEventListener('touchend', checkSelection);
     document.addEventListener('selectionchange', checkSelection);
 
-    function handleExtract(e) {
-        e.preventDefault(); 
+    globalExtractBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         if (currentSelectionRange && currentSourceTheme) {
             const text = currentSelectionRange.toString();
@@ -769,16 +766,14 @@
 
             createChip(text, currentSourceTheme, chipId, container, currentPrefix);
             
+            // 延遲移除選取狀態，讓 iOS 順利判定
             setTimeout(() => {
                 window.getSelection().removeAllRanges();
                 globalExtractBtn.style.display = 'none';
                 currentSelectionRange = null;
             }, 50);
         }
-    }
-
-    globalExtractBtn.addEventListener('click', handleExtract);
-    globalExtractBtn.addEventListener('touchend', handleExtract);
+    });
 
     // ==================== 獨立推導元件產生器 ====================
     function buildChainComponent(chainKey, sourceDb, prefix, triggerBtn = null) {
@@ -881,12 +876,12 @@
     }
 
     // ==================== 模組化初始化邏輯 (iPad拖曳修復核心) ====================
-    let globallyDraggedChipId = null; // 處理 iPad Safari 丟失資料的備用變數
+    let globallyDraggedChipId = null;
 
     function initDragAndDrop(prefix) {
         const dropZones = document.querySelectorAll(`#${prefix}-zone-left, #${prefix}-zone-right, #${prefix}-chip-container`);
         dropZones.forEach(zone => {
-            zone.addEventListener('dragenter', (e) => { e.preventDefault(); }); // 必須加上 dragenter，iPad 才能正確辨識放置區
+            zone.addEventListener('dragenter', (e) => { e.preventDefault(); }); // iPad 必須
             zone.addEventListener('dragover', (e) => { 
                 e.preventDefault(); 
                 e.dataTransfer.dropEffect = 'move';
@@ -898,7 +893,7 @@
                 e.stopPropagation();
                 zone.classList.remove('drag-over');
                 
-                // 若原生 e.dataTransfer 遺失，自動切換至全域變數
+                // 優先取 dataTransfer，如果 iOS 搞鬼清除了，就用全域變數備援
                 const draggedChipId = e.dataTransfer.getData('text/plain') || globallyDraggedChipId;
                 
                 if (draggedChipId && draggedChipId.startsWith(prefix)) {
@@ -930,12 +925,11 @@
         
         chip.appendChild(textSpan); chip.appendChild(deleteBtn);
         
-        // 強化 dragstart 事件，綁定備用 ID 以供 iPad 使用
         chip.addEventListener('dragstart', (e) => {
             if (e.target.className === 'delete-btn') return e.preventDefault();
             e.dataTransfer.setData('text/plain', chip.id); 
             e.dataTransfer.effectAllowed = 'move';
-            globallyDraggedChipId = chip.id; // 記錄到全域變數中
+            globallyDraggedChipId = chip.id; // 記錄全域變數防護
             setTimeout(() => chip.style.opacity = '0.5', 0);
         });
         
